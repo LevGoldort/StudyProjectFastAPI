@@ -8,7 +8,7 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./rpg_api.db"
 # create new engine instance
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-# create sessionmaker
+# create session maker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

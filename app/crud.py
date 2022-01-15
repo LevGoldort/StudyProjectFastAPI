@@ -10,7 +10,7 @@ from app.models import Character
 
 def create_character(db: Session, name, dnd_class, level, race, alignment):
     """
-    function to create a friend model object
+    function to create a character model object
     """
     # create friend instance
     new_character = Character(name=name, dnd_class=dnd_class, level=level, race=race, alignment=alignment)
@@ -23,27 +23,27 @@ def create_character(db: Session, name, dnd_class, level, race, alignment):
     return new_character
 
 
-def get_character(db:Session, id:int):
+def get_character(db: Session, char_id: int):
     """
-    get the first record with a given id, if no such record exists, will return null
+    get the character record with a given id, if no such record exists, will return null
     """
-    db_character = db.query(Character).filter(Character.id == id).first()
+    db_character = db.query(Character).filter(Character.id == char_id).first()
     return db_character
 
 
-def list_characters(db:Session):
+def list_characters(db: Session):
     """
-    Return a list of all existing Friend records
+    Return a list of all existing character records
     """
     all_friends = db.query(Character).all()
     return all_friends
 
 
-def update_character(db: Session, id: int, name: str, dnd_class: str, level: int, race: str, alignment: str):
+def update_character(db: Session, char_id: int, name: str, dnd_class: str, level: int, race: str, alignment: str):
     """
-    Update a Friend object's attributes
+    Update a Character object's attributes
     """
-    db_character = get_character(db=db, id=id)
+    db_character = get_character(db=db, char_id=char_id)
     db_character.name = name
     db_character.dnd_class = dnd_class
     db_character.level = level
@@ -51,14 +51,14 @@ def update_character(db: Session, id: int, name: str, dnd_class: str, level: int
     db_character.alignment = alignment
 
     db.commit()
-    db.refresh(db_character) # refresh the attribute of the given instance
+    db.refresh(db_character)  # refresh the attribute of the given instance
     return db_character
 
 
-def delete_character(db: Session, id: int):
+def delete_character(db: Session, char_id: int):
     """
-    Delete a Friend object
+    Delete a Character object
     """
-    db_character = get_character(db=db, id=id)
+    db_character = get_character(db=db, char_id=char_id)
     db.delete(db_character)
-    db.commit() #save changes to db
+    db.commit()  # save changes to db

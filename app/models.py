@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String
 
 from .db import Base
 
+
 # model/table
 class Character(Base):
     __tablename__ = "characters"
