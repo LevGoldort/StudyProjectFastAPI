@@ -1,3 +1,4 @@
 /venv
 .idea
 rpg_api.db
+/rpg_sqlite.db

@@ -1,14 +1,25 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+import sqlite3
 
 # define sqlite connection url
-SQLALCHEMY_DATABASE_URL = "sqlite:///./rpg_api.db"
+SQLALCHEMY_DATABASE_URL = "../rpg_sqlite.db"
 
 # create new engine instance
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = sqlite3.connect(SQLALCHEMY_DATABASE_URL)
 
 # create session maker
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = engine.cursor()
+if __name__ == "__main__":
+    try:
+        SessionLocal.execute('''CREATE TABLE characters
+                       (char_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                       name, 
+                       dnd_class, 
+                       level, 
+                       race, 
+                       alignment)''')
+        engine.commit()
 
-Base = declarative_base()
+    except:
+        print('table "Characters" already exists')
+
+    engine.close()

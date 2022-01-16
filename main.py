@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 # initialize FastApi instance
 app = FastAPI()
-models.Base.metadata.create_all(bind=engine)
+eng = engine
 
 
 def get_db():

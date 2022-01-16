@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from app.db import SessionLocal as Session
 
 """
 Session manages persistence operations for ORM-mapped objects.
@@ -6,6 +6,23 @@ Let's just refer to it as a database session for simplicity
 """
 
 from app.models import Character
+
+
+def db_add(db, character):
+    db.execute()
+    pass
+
+
+def db_get(db, char_id):
+    pass
+
+
+def db_get_all(db):
+    pass
+
+
+def db_del(db, char_id):
+    pass
 
 
 def create_character(db: Session, name, dnd_class, level, race, alignment):
