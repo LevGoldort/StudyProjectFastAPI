@@ -1,22 +1,26 @@
 from fastapi import FastAPI
 from app import models
-from app.db import engine
+from app.db import SQLALCHEMY_DATABASE_URL
 from app.db import SessionLocal
 from fastapi import Depends
 from app import crud
 from sqlalchemy.orm import Session
+import sqlite3
 
 # initialize FastApi instance
 app = FastAPI()
-eng = engine
+eng = sqlite3.connect(SQLALCHEMY_DATABASE_URL, check_same_thread=False)
 
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    db = eng.cursor()
+    db.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    print('HEYHEYHEYHEY', db.fetchall())
+    return db
+    # try:
+    #     yield db
+    # finally:
+    #     db.close()
 
 
 # define endpoint

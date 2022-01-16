@@ -9,11 +9,26 @@ from app.models import Character
 
 
 def db_add(db, character):
-    db.execute()
+    db.execute("INSERT INTO characters VALUES (?,?,?,?,?)", (
+        character.name,
+        character.dnd_class,
+        character.level,
+        character.race,
+        character.alignment
+    ))
+    db.commit()
     pass
 
 
 def db_get(db, char_id):
+    db_select = db.execute("SELECT * FROM characters WHERE char_id = ?", char_id)
+
+    if not db_select:
+        return None
+
+    for row in db.execute("SELECT * FROM characters WHERE char_id = ?", char_id):
+        # char = Character()
+        pass
     pass
 
 
@@ -27,16 +42,13 @@ def db_del(db, char_id):
 
 def create_character(db: Session, name, dnd_class, level, race, alignment):
     """
-    function to create a character model object
+    function to create a character model object and put it to db
     """
-    # create friend instance
+    # create character instance
     new_character = Character(name=name, dnd_class=dnd_class, level=level, race=race, alignment=alignment)
-    # place object in the database session
-    db.add(new_character)
-    # commit your instance to the database
-    db.commit()
-    # refresh the attributes of the given instance
-    db.refresh(new_character)
+
+    db_add(db, new_character)
+
     return new_character
 
 
