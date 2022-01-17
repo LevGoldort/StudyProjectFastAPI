@@ -1,4 +1,4 @@
-from app.db import SessionLocal as Session
+from app.db import engine as Session
 
 """
 Session manages persistence operations for ORM-mapped objects.
@@ -9,7 +9,8 @@ from app.models import Character
 
 
 def db_add(db, character):
-    db.execute("INSERT INTO characters VALUES (?,?,?,?,?)", (
+    cur = db.cursor()
+    cur.execute("INSERT INTO characters(name, dnd_class, level, race, alignment)  VALUES (?,?,?,?,?)", (
         character.name,
         character.dnd_class,
         character.level,
@@ -17,7 +18,7 @@ def db_add(db, character):
         character.alignment
     ))
     db.commit()
-    pass
+    db.close()
 
 
 def db_get(db, char_id):
