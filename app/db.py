@@ -3,8 +3,11 @@ import sqlite3
 # define sqlite connection url
 DATABASE_URL = "./rpg_api.db"
 
+
 # create new engine instance
-engine = sqlite3.connect(DATABASE_URL, check_same_thread=False)
+def engine_connect():
+    return sqlite3.connect(DATABASE_URL, check_same_thread=False)
+
 
 # create session maker
 if __name__ == "__main__":

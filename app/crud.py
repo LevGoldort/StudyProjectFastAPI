@@ -1,4 +1,3 @@
-from app.db import engine as Session
 
 """
 Session manages persistence operations for ORM-mapped objects.
@@ -18,30 +17,66 @@ def db_add(db, character):
         character.alignment
     ))
     db.commit()
-    db.close()
 
 
 def db_get(db, char_id):
-    db_select = db.execute("SELECT * FROM characters WHERE char_id = ?", char_id)
 
-    if not db_select:
-        return None
+    db_select = db.execute("SELECT * FROM characters WHERE char_id = ?", (str(char_id),))
 
-    for row in db.execute("SELECT * FROM characters WHERE char_id = ?", char_id):
-        # char = Character()
-        pass
-    pass
+    for row in db_select:
+        return row  # executes if there is at least one row
+
+    return None  # no rows found
 
 
 def db_get_all(db):
-    pass
+    cur = db.cursor()
+    cur.execute("SELECT * FROM characters")
+    db.commit()
+    return cur.fetchall()
 
 
-def db_del(db, char_id):
-    pass
+def db_update(db, char_id, new_character):
+    old_character = db_get(db, char_id)
+
+    if not old_character:
+        return None
+
+    cur = db.cursor()
+    param_tuple = (
+                new_character.name,
+                new_character.dnd_class,
+                new_character.level,
+                new_character.race,
+                new_character.alignment,
+                char_id)
+    cur.execute('''UPDATE characters SET 
+                name = ? ,
+                dnd_class = ? ,
+                level = ? ,
+                race = ? ,
+                alignment = ?
+                WHERE char_id = ?
+                ''',
+                param_tuple)
+    db.commit()
+    return new_character
 
 
-def create_character(db: Session, name, dnd_class, level, race, alignment):
+def db_delete(db, char_id):
+    cur = db.cursor()
+    deleted_character = db_get(db, char_id)
+
+    if not deleted_character:
+        return None
+
+    cur.execute('''DELETE FROM characters where char_id = ?''', (char_id,))
+    db.commit()
+
+    return deleted_character
+
+
+def create_character(db, name, dnd_class, level, race, alignment):
     """
     function to create a character model object and put it to db
     """
@@ -53,42 +88,40 @@ def create_character(db: Session, name, dnd_class, level, race, alignment):
     return new_character
 
 
-def get_character(db: Session, char_id: int):
+def get_character(db, char_id: int):
     """
     get the character record with a given id, if no such record exists, will return null
     """
-    db_character = db.query(Character).filter(Character.id == char_id).first()
+    db_character = db_get(db, char_id)
     return db_character
 
 
-def list_characters(db: Session):
+def list_characters(db):
     """
     Return a list of all existing character records
     """
-    all_friends = db.query(Character).all()
-    return all_friends
+    all_characters = db_get_all(db)
+    return all_characters
 
 
-def update_character(db: Session, char_id: int, name: str, dnd_class: str, level: int, race: str, alignment: str):
+def update_character(db, char_id: int, name: str, dnd_class: str, level: int, race: str, alignment: str):
     """
     Update a Character object's attributes
     """
-    db_character = get_character(db=db, char_id=char_id)
-    db_character.name = name
-    db_character.dnd_class = dnd_class
-    db_character.level = level
-    db_character.race = race
-    db_character.alignment = alignment
+    new_character = Character(name=name,
+                              dnd_class=dnd_class,
+                              level=level,
+                              race=race,
+                              alignment=alignment)
 
-    db.commit()
-    db.refresh(db_character)  # refresh the attribute of the given instance
-    return db_character
+    res = db_update(db=db, char_id=char_id, new_character=new_character)
+
+    return res
 
 
-def delete_character(db: Session, char_id: int):
+def delete_character(db, char_id: int):
     """
     Delete a Character object
     """
-    db_character = get_character(db=db, char_id=char_id)
-    db.delete(db_character)
-    db.commit()  # save changes to db
+    deleted_character = db_delete(db, char_id)
+    return deleted_character
